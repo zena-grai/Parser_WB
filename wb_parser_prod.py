@@ -3,11 +3,11 @@ import datetime
 import requests
 import json
 import pandas as pd
-from retry import retry
+#from retry import retry
 # pip install openpyxl
 import fake_useragent
 from bs4 import BeautifulSoup
-from selenium import webdriver
+#from selenium import webdriver
 
 
 user = fake_useragent.UserAgent().random
@@ -45,11 +45,9 @@ class ParserWB:
         #print(products_row)
         if products_row is not None and len(products_row) > 0:
             for number_product, product in enumerate(products_row, start=1):
-                url = f"https://www.wildberries.ru/catalog/{product['id']}/detail.aspx"
-
-                page_url = self.get_url_for_data(url)
-
-                item_data, item_seller = self.get_card_data(page_url)
+                page_url = self.get_url_for_data(str(product['id']))
+                #print(page_url)
+                #item_data, item_seller = self.get_card_data(page_url)
 
                 products.append({
                     'number': number_product,
@@ -60,19 +58,23 @@ class ParserWB:
                     'salePriceU': float(product.get('salePriceU')) / 100 if product.get('salePriceU',
                                                                                         None) is not None else None,
                 })
-            print(len(products))
+            #print(len(products))
         return products
 
-    def get_url_for_data(self, page_url):
-        new_req = requests.get(page_url)
-        print(new_req.text)
-        soup = BeautifulSoup(new_req.text, 'lxml')
-        try:
-            photo = soup.find('img', class_="photo-zoom__preview").__getattribute__('src')
-            split_url = photo.split('image')
-            return split_url[0]
-        except Exception as e:
-            print('Error')
+    def get_url_for_data(self, card_id):
+        if len(card_id) == 8:
+            ref_card = f"https://basket-number_rep.wb.ru/vol{card_id[:3]}/part{card_id[:5]}/{card_id}/info/ru/card.json"
+        elif len(card_id) == 9:
+            ref_card = f"https://basket-number_rep.wb.ru/vol{card_id[:4]}/part{card_id[:6]}/{card_id}/info/ru/card.json"
+        else:
+            print("Артикул не соответствует заданой длине!!!")
+
+        for i in range(1, 13):
+            new_ref = ref_card.replace('number_rep', str(i).zfill(2))
+            #print(new_ref)
+            if requests.get(new_ref).status_code == 200:
+                print(new_ref)
+                return new_ref
 
     def get_card_data(self, card_url):
         return requests.get(f'{card_url}/info/ru/card.json').json()["grouped_options"], requests.get(f'{card_url}/info/sellers.json').json()
@@ -80,7 +82,6 @@ class ParserWB:
     def main(self):
         i = 1
         products = []
-
         while True:
             response = self.get_category(i)
             if response.get('data', {}).get('products', []) == []:
