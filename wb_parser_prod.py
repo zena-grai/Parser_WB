@@ -1,24 +1,18 @@
 import datetime
+import time
 
 import requests
 import json
 import pandas as pd
-#from retry import retry
-# pip install openpyxl
 import fake_useragent
-from bs4 import BeautifulSoup
-#from selenium import webdriver
-
 
 user = fake_useragent.UserAgent().random
+
 
 class ParserWB:
     def __init__(self, url):
         self.url = url
-
-    def get_category(self, i):
-
-        headers = {
+        self.headers = {
             'Accept': '*/*',
             'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
             'Connection': 'keep-alive',
@@ -32,52 +26,65 @@ class ParserWB:
             'sec-ch-ua-mobile': '?0',
             'sec-ch-ua-platform': '"macOS"',
         }
-
-        response = requests.get(self.url.replace('number_page', str(i)))
-
-        #print(response.status_code)
-        #print(response.json())
-
+    def get_category(self, i):
+        response = requests.get(self.url.replace('number_page', str(i)), headers=self.headers)
+        print(f'Статус - {response.status_code}. Страница - {i}.')
         return response.json()
 
     def prepare_items(self, response, products):
         products_row = response.get('data', {}).get('products', None)
-        #print(products_row)
+
         if products_row is not None and len(products_row) > 0:
             for number_product, product in enumerate(products_row, start=1):
-                page_url = self.get_url_for_data(str(product['id']))
-                #print(page_url)
-                #item_data, item_seller = self.get_card_data(page_url)
+                url_card = f"https://www.wildberries.ru/catalog/{str(product['id'])}/detail.aspx"
+
+                ref_card, seller_card = self.get_url_for_data(str(product['id']))
+
+                item_data, item_seller = self.get_card_data(ref_card, seller_card)
 
                 products.append({
-                    'number': number_product,
-                    'brand': product.get('brand', None),
-                    'name': product.get('name', None),
-                    'sale': product.get('sale', None),
-                    'priceU': float(product.get('priceU')) / 100 if product.get('priceU', None) != None else None,
-                    'salePriceU': float(product.get('salePriceU')) / 100 if product.get('salePriceU',
-                                                                                        None) is not None else None,
+                    'Ссылка': url_card,
+                    'Артикул': product['id'],
+                    'Наименование': product['name'],
+                    'Бренд': product['brand'],
+                    'Цена': float(product['priceU']) / 100,
+                    'Цена со скидкой': float(product['salePriceU']) / 100,
+                    'Продавец': item_seller['trademark'],
+                    'Емкость': next((option["value"] for item in item_data for option in item["options"] if
+                                     "Емкость" in option["name"]), None),
+                    'Пусковой ток': next((option["value"] for item in item_data for option in item["options"] if
+                                          "Пусковой" in option["name"]), None),
+                    'Полярность': next((option["value"] for item in item_data for option in item["options"] if
+                                        "Полярность" in option["name"]), None),
+                    'Габариты': next((option["value"] for item in item_data for option in item["options"] if
+                                      "Габариты" in option["name"]), None),
+                    'Технология': next((option["value"] for item in item_data for option in item["options"] if
+                                        "Технология" in option["name"]), None)
                 })
-            #print(len(products))
         return products
 
     def get_url_for_data(self, card_id):
         if len(card_id) == 8:
             ref_card = f"https://basket-number_rep.wb.ru/vol{card_id[:3]}/part{card_id[:5]}/{card_id}/info/ru/card.json"
+            ref_seller = f"https://basket-number_rep.wb.ru/vol{card_id[:3]}/part{card_id[:5]}/{card_id}/info/sellers.json"
         elif len(card_id) == 9:
             ref_card = f"https://basket-number_rep.wb.ru/vol{card_id[:4]}/part{card_id[:6]}/{card_id}/info/ru/card.json"
+            ref_seller = f"https://basket-number_rep.wb.ru/vol{card_id[:3]}/part{card_id[:5]}/{card_id}/info/sellers.json"
         else:
-            print("Артикул не соответствует заданой длине!!!")
+            print("Артикул не соответствует заданной длине!!!")
 
         for i in range(1, 13):
-            new_ref = ref_card.replace('number_rep', str(i).zfill(2))
-            #print(new_ref)
-            if requests.get(new_ref).status_code == 200:
-                print(new_ref)
-                return new_ref
+            new_ref_card = ref_card.replace('number_rep', str(i).zfill(2))
+            new_ref_card_seller = ref_seller.replace('number_rep', str(i).zfill(2))
+            if requests.get(new_ref_card).status_code == 200:
+                return new_ref_card, new_ref_card_seller
 
-    def get_card_data(self, card_url):
-        return requests.get(f'{card_url}/info/ru/card.json').json()["grouped_options"], requests.get(f'{card_url}/info/sellers.json').json()
+    def get_card_data(self, card_url, seller_url):
+        card_u = requests.get(card_url, headers=self.headers).json()["grouped_options"]
+        time.sleep(5)
+        seller_u = requests.get(seller_url, headers=self.headers).json()
+        time.sleep(3)
+        return card_u, seller_u
 
     def main(self):
         i = 1
@@ -88,15 +95,13 @@ class ParserWB:
                 break
             products = self.prepare_items(response, products)
             i += 1
-
         self.save_excel(products)
+        print('---Success---')
 
     def save_excel(self, data):
         """сохранение результата в excel файл"""
         pd.DataFrame(data).to_csv('test_products.xls', index=False)
         print(f'Все сохранено в test_products.xls\n')
-
-
 
 
 if __name__ == '__main__':
