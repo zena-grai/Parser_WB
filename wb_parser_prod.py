@@ -1,6 +1,7 @@
 import datetime
+import os
 import time
-
+from tqdm import tqdm
 import requests
 import json
 import pandas as pd
@@ -26,6 +27,7 @@ class ParserWB:
             'sec-ch-ua-mobile': '?0',
             'sec-ch-ua-platform': '"macOS"',
         }
+
     def get_category(self, i):
         response = requests.get(self.url.replace('number_page', str(i)), headers=self.headers)
         print(f'Статус - {response.status_code}. Страница - {i}.')
@@ -35,7 +37,7 @@ class ParserWB:
         products_row = response.get('data', {}).get('products', None)
 
         if products_row is not None and len(products_row) > 0:
-            for number_product, product in enumerate(products_row, start=1):
+            for product in tqdm(products_row):
                 url_card = f"https://www.wildberries.ru/catalog/{str(product['id'])}/detail.aspx"
 
                 ref_card, seller_card = self.get_url_for_data(str(product['id']))
@@ -69,7 +71,7 @@ class ParserWB:
             ref_seller = f"https://basket-number_rep.wb.ru/vol{card_id[:3]}/part{card_id[:5]}/{card_id}/info/sellers.json"
         elif len(card_id) == 9:
             ref_card = f"https://basket-number_rep.wb.ru/vol{card_id[:4]}/part{card_id[:6]}/{card_id}/info/ru/card.json"
-            ref_seller = f"https://basket-number_rep.wb.ru/vol{card_id[:3]}/part{card_id[:5]}/{card_id}/info/sellers.json"
+            ref_seller = f"https://basket-number_rep.wb.ru/vol{card_id[:4]}/part{card_id[:6]}/{card_id}/info/sellers.json"
         else:
             print("Артикул не соответствует заданной длине!!!")
 
@@ -80,11 +82,12 @@ class ParserWB:
                 return new_ref_card, new_ref_card_seller
 
     def get_card_data(self, card_url, seller_url):
-        card_u = requests.get(card_url, headers=self.headers).json()["grouped_options"]
-        time.sleep(5)
-        seller_u = requests.get(seller_url, headers=self.headers).json()
-        time.sleep(3)
-        return card_u, seller_u
+        try:
+            card_u = requests.get(card_url).json()["grouped_options"]
+            seller_u = requests.get(seller_url).json()
+            return card_u, seller_u
+        except:
+            print('Something went wrong...')
 
     def main(self):
         i = 1
