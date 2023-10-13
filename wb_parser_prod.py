@@ -6,6 +6,7 @@ import requests
 import json
 import pandas as pd
 import fake_useragent
+from connect import DB
 
 user = fake_useragent.UserAgent().random
 
@@ -34,6 +35,9 @@ class ParserWB:
         return response.json()
 
     def prepare_items(self, response, products):
+        obj_DB = DB()
+        obj_DB.make_connection()
+
         products_row = response.get('data', {}).get('products', None)
 
         if products_row is not None and len(products_row) > 0:
@@ -63,6 +67,7 @@ class ParserWB:
                     'Технология': next((option["value"] for item in item_data for option in item["options"] if
                                         "Технология" in option["name"]), None)
                 })
+                obj_DB.add_product()
         return products
 
     def get_url_for_data(self, card_id):
