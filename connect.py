@@ -30,11 +30,14 @@ class DB:
                       item_seller['trademark'],
                       next((option["value"] for item in item_data for option in item["options"] if
                             "Емкость" in option["name"]), None),
-                      1,
+                      next((option["value"] for item in item_data for option in item["options"] if
+                            "Пусковой ток (А)" in option["name"]), None),
                       next((option["value"] for item in item_data for option in item["options"] if
                             "Полярность" in option["name"]), None),
                       next((option["value"] for item in item_data for option in item["options"] if
                             "Высота предмета" in option["name"]), None),
+                      next((option["value"] for item in item_data for option in item["options"] if
+                            "Ширина предмета" in option["name"]), None),
                       next((option["value"] for item in item_data for option in item["options"] if
                             "Глубина предмета" in option["name"]), None),
                       next((option["value"] for item in item_data for option in item["options"] if
