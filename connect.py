@@ -52,7 +52,7 @@ class DB:
                       url)
         cursor.execute(sqlite_insert_with_param, data_tuple)
         c.commit()
-        # Не забываем закрыть соединение с базой данных
+        # Закрываем соединение с базой
         c.close()
 
     def clear_table(self):
@@ -64,8 +64,8 @@ class DB:
             cursor.execute(sql_delete_query)
             conn.commit()
             print("Таблица успешно очищена")
-            cursor.close()
+            conn.close()
         except sl.Error as error:
-            print("Ошибка при работе с SQLite при обновлении таблицы.", error)
+            print("Ошибка при работе с SQLite при очистке таблицы.", error)
 
 
