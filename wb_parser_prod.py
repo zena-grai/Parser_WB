@@ -37,7 +37,7 @@ class ParserWB:
     def prepare_items(self, response):
         obj_DB = DB()
         obj_DB.make_connection()
-        obj_DB.clear_table()
+
         products_row = response.get('data', {}).get('products', None)
 
         if products_row is not None and len(products_row) > 0:
@@ -80,7 +80,7 @@ class ParserWB:
             response = self.get_category(i)
             if response.get('data', {}).get('products', []) == []:
                 break
-            self.prepare_items(response)
+            product = self.prepare_items(response)
             i += 1
         print('---Success---')
 
@@ -88,5 +88,8 @@ class ParserWB:
 
 if __name__ == '__main__':
     url = 'https://catalog.wb.ru/catalog/autoproduct12/v1/catalog?cat=128636&limit=100&sort=popular&page=number_page&xsubject=5819&appType=128&curr=byn&lang=ru&dest=-59208&regions=1,4,22,30,31,33,38,40,48,66,68,69,70,80,83,112,114&spp=0&TestGroup=no_test&TestID=no_test'
+    obj_DB = DB()
+    obj_DB.clear_table()
+
     obj = ParserWB(url)
     obj.main()

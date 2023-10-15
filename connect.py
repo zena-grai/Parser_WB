@@ -7,15 +7,9 @@ class DB:
     def make_connection(self):
         # пытаемся подключиться к базе данных
         try:
-            sqlite_connection = sl.connect('my-test.db')
-            print("Подключен к SQLite")
-            return sqlite_connection
+            return sl.connect('my-test.db')
         except sl.Error as error:
             print("Ошибка при работе с SQLite", error)
-        finally:
-            if sqlite_connection:
-                sqlite_connection.close()
-                print("Соединение с SQLite закрыто")
 
     def add_product(self, url, products, item_data, item_seller):
         """Добавляем нашу номенклатуру в базу данных"""
@@ -61,20 +55,17 @@ class DB:
         # Не забываем закрыть соединение с базой данных
         c.close()
 
-        def clear_table(self):
-            try:
-                conn = self.make_connection()
-                cursor = conn.cursor()
+    def clear_table(self):
+        try:
+            conn = self.make_connection()
+            cursor = conn.cursor()
 
-                sql_delete_query = """DELETE from Products"""
-                cursor.execute(sql_delete_query)
-                c.commit()
-                print("Таблица успешно очищена")
-                cursor.close()
-            except sl.Error as error:
-                print("Ошибка при работе с SQLite", error)
-            finally:
-                if cursor:
-                    cursor.close()
-                    print("Соединение с SQLite закрыто")
+            sql_delete_query = """Delete from Products"""
+            cursor.execute(sql_delete_query)
+            conn.commit()
+            print("Таблица успешно очищена")
+            cursor.close()
+        except sl.Error as error:
+            print("Ошибка при работе с SQLite при обновлении таблицы.", error)
+
 
