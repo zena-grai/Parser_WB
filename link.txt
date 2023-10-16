@@ -1,5 +1,6 @@
-https://www.wildberries.ru/catalog/avtotovary/zapchasti-na-legkovye-avtomobili/elektrooborudovanie?sort=popular&page=1&xsubject=5819
-https://www.wildberries.ru/catalog/elektronika/ofisnaya-tehnika/ibp-i-aksessuary?sort=popular&page=1&xsubject=2196
-https://www.wildberries.ru/catalog/elektronika/kabeli-i-zaryadnye-ustroystva?sort=popular&page=1&xsubject=792
-https://www.wildberries.ru/catalog/avtotovary/mototovary/elektrooborudovanie?sort=popular&page=1&xsubject=4129
-https://www.wildberries.ru/catalog/avtotovary/masla-i-zhidkosti/motornye-masla
+https://catalog.wb.ru/catalog/electronic17/catalog?TestGroup=control&TestID=331&appType=1&cat=128306&curr=rub&dest=-1257786&page=number_page&regions=80,83,38,4,64,33,68,70,30,40,86,75,69,1,66,110,22,48,31,71,112,114&sort=popular&spp=29&xsubject=2196
+https://catalog.wb.ru/catalog/electronic17/catalog?TestGroup=control&TestID=331&appType=1&cat=128306&curr=rub&dest=-1257786&page=number_page&regions=80,83,38,4,64,33,68,70,30,40,86,75,69,1,66,110,22,48,31,71,112,114&sort=popular&spp=29&xsubject=2196
+https://catalog.wb.ru/catalog/electronic14/catalog?TestGroup=control&TestID=331&appType=1&cat=59132&curr=rub&dest=-1257786&page=number_page&regions=80,83,38,4,64,33,68,70,30,40,86,75,69,1,66,110,22,48,31,71,112,114&sort=popular&spp=29&xsubject=792
+https://catalog.wb.ru/catalog/autoproduct15/catalog?TestGroup=control&TestID=331&appType=1&cat=128697&curr=rub&dest=-1257786&page=number_page&regions=80,83,38,4,64,33,68,70,30,40,86,75,69,1,66,110,22,48,31,71,112,114&sort=popular&spp=29&xsubject=4129
+https://catalog.wb.ru/catalog/autoproduct13/catalog?TestGroup=control&TestID=331&appType=1&curr=rub&dest=-1257786&page=number_page&regions=80,83,38,4,64,33,68,70,30,40,86,75,69,1,66,110,22,48,31,71,112,114&sort=popular&spp=29&subject=3906
+

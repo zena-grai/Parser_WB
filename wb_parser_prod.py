@@ -1,7 +1,8 @@
-from tqdm import tqdm
+from tqdm import tqdm, tqdm_notebook
 import requests
 import fake_useragent
 from connect import DB
+import time
 
 user = fake_useragent.UserAgent().random
 
@@ -25,7 +26,7 @@ class ParserWB:
         }
 
     def get_category(self, i):
-        response = requests.get(self.url.replace('number_page', str(i)), headers=self.headers)
+        response = requests.get(self.url.replace('number_page', str(i)))
         print(f'Статус - {response.status_code}. Страница - {i}.')
         return response.json()
 
@@ -35,12 +36,13 @@ class ParserWB:
         products_row = response.get('data', {}).get('products', None)
 
         if products_row is not None and len(products_row) > 0:
-            for product in tqdm(products_row):
+            for product in tqdm(products_row, desc="products"):
                 url_card = f"https://www.wildberries.ru/catalog/{str(product['id'])}/detail.aspx"
 
                 ref_card, seller_card = self.get_url_for_data(str(product['id']))
+                time.sleep(3)
                 item_data, item_seller = self.get_card_data(ref_card, seller_card)
-
+                time.sleep(1)
                 obj_DB.add_product(url_card, product, item_data, item_seller)
 
     def get_url_for_data(self, card_id):
