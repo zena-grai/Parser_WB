@@ -43,8 +43,12 @@ class ParserWB:
 
                 ref_card, seller_card = self.get_url_for_data(str(product["id"]))
                 item_data, item_seller = self.get_card_data(ref_card, seller_card)
-
-                obj_DB.add_product(url_card, product, item_data, item_seller)
+                try:
+                    obj_DB.add_product(url_card, product, item_data, item_seller)
+                except Exception as e:
+                    print(
+                        f"\nНе удалось добавить товар в базу данных - {url_card} \nError: {e}"
+                    )
 
     def get_url_for_data(self, card_id):
         if len(card_id) == 7:
