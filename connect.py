@@ -5,14 +5,12 @@ class DB:
         pass
 
     def make_connection(self):
-        # пытаемся подключиться к базе данных
         try:
             return sl.connect('my-test.db')
         except sl.Error as error:
             print("Ошибка при работе с SQLite", error)
 
     def add_product(self, url, products, item_data, item_seller):
-        """Добавляем нашу номенклатуру в базу данных"""
         c = self.make_connection()
         # Создаем курсор - это специальный объект который делает запросы и получает их результаты
         cursor = c.cursor()
@@ -26,7 +24,7 @@ class DB:
                       products['brand'],
                       float(products['priceU']) / 100,
                       float(products['salePriceU']) / 100,
-                      item_seller['trademark'],
+                      item_seller['supplierName'] if not item_seller['trademark'] else item_seller['trademark'],
                       next((option["value"] for item in item_data for option in item["options"] if
                             "Емкость" in option["name"]), None),
                       next((option["value"] for item in item_data for option in item["options"] if

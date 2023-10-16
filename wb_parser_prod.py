@@ -1,10 +1,5 @@
-import datetime
-import os
-import time
 from tqdm import tqdm
 import requests
-import json
-import pandas as pd
 import fake_useragent
 from connect import DB
 
@@ -36,7 +31,6 @@ class ParserWB:
 
     def prepare_items(self, response):
         obj_DB = DB()
-        obj_DB.make_connection()
 
         products_row = response.get('data', {}).get('products', None)
 
@@ -48,7 +42,6 @@ class ParserWB:
                 item_data, item_seller = self.get_card_data(ref_card, seller_card)
 
                 obj_DB.add_product(url_card, product, item_data, item_seller)
-
 
     def get_url_for_data(self, card_id):
         if len(card_id) == 8:
@@ -71,21 +64,23 @@ class ParserWB:
             card_u = requests.get(card_url).json()["grouped_options"]
             seller_u = requests.get(seller_url).json()
             return card_u, seller_u
-        except:
+        except Exception:
             print('Something went wrong...')
 
     def main(self):
+        obj_DB = DB()
+        obj_DB.make_connection()
         i = 1
         while True:
             response = self.get_category(i)
-            if response.get('data', {}).get('products', []) == []:
+            if not response.get('data', {}).get('products', []):
                 break
-            product = self.prepare_items(response)
+            self.prepare_items(response)
             i += 1
         print('---Success---')
 
 
-
+'''
 if __name__ == '__main__':
     url = 'https://catalog.wb.ru/catalog/autoproduct12/v1/catalog?cat=128636&limit=100&sort=popular&page=number_page&xsubject=5819&appType=128&curr=byn&lang=ru&dest=-59208&regions=1,4,22,30,31,33,38,40,48,66,68,69,70,80,83,112,114&spp=0&TestGroup=no_test&TestID=no_test'
     obj_DB = DB()
@@ -93,3 +88,4 @@ if __name__ == '__main__':
 
     obj = ParserWB(url)
     obj.main()
+'''
