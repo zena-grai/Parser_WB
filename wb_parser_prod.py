@@ -86,10 +86,14 @@ class ParserWB:
         obj_DB.make_connection()
         i = 1
         while True:
-            response = self.get_category(i)
-            if not response.get("data", {}).get("products", []):
-                break
-            time.sleep(0.1)
-            self.prepare_items(response)
-            i += 1
+            try:
+                response = self.get_category(i)
+                if not response.get("data", {}).get("products", []):
+                    break
+                time.sleep(0.1)
+                self.prepare_items(response)
+                i += 1
+            except Exception as e:
+                print(f'\nНе удалось получить данные страницы... Страница {i} не доступна...\n', e)
+                i += 1
         print("---Success---")
