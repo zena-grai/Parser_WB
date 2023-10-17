@@ -45,7 +45,8 @@ class ParserWB:
                     ref_card, seller_card = self.get_url_for_data(str(product["id"]))
                     item_data, item_seller = self.get_card_data(ref_card, seller_card)
                 except Exception as e:
-                    print('Ошибка получения json...', url_card)
+                    print("\nОшибка получения json...\n", url_card)
+
                 try:
                     obj_DB.add_product(url_card, product, item_data, item_seller)
                 except Exception as e:
@@ -78,12 +79,12 @@ class ParserWB:
             seller_u = requests.get(seller_url).json()
             return card_u, seller_u
         except Exception:
-            print("Something went wrong...", f"URL - {card_url}")
+            print("\nSomething went wrong...", f"\nURL - {card_url}")
 
     def main(self):
         obj_DB = DB()
         obj_DB.make_connection()
-        i = 24
+        i = 1
         while True:
             response = self.get_category(i)
             if not response.get("data", {}).get("products", []):

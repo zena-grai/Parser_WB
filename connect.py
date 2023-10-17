@@ -26,7 +26,7 @@ class DB:
             products["brand"],
             float(products["priceU"]) / 100,
             float(products["salePriceU"]) / 100,
-            item_seller["trademark"] or None,
+            None if not item_seller["trademark"] else item_seller["trademark"],
             next(
                 (
                     option["value"]
