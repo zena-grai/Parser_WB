@@ -26,10 +26,21 @@ class ParserWB:
         }
 
     def get_category(self, i):
-        response = requests.get(
-            self.url.replace("number_page", str(i)), headers=self.headers
-        )
-        print(f"Статус - {response.status_code}. Страница - {i}.")
+        flag = True
+        while flag:
+            try:
+                response = requests.get(
+                    self.url.replace("number_page", str(i)), headers=self.headers
+                )
+                if response.status_code == 200:
+                    flag = False
+                    print(f"Статус - {response.status_code}. Страница - {i}.")
+                else:
+                    flag = True
+            except Exception:
+                print('... ждем ...')
+                time.sleep(5)
+                flag = True
         return response.json()
 
     def prepare_items(self, response):
@@ -84,7 +95,7 @@ class ParserWB:
     def main(self):
         obj_DB = DB()
         obj_DB.make_connection()
-        i = 1
+        i = 30
         while True:
             try:
                 response = self.get_category(i)
@@ -94,6 +105,8 @@ class ParserWB:
                 self.prepare_items(response)
                 i += 1
             except Exception as e:
-                print(f'\nНе удалось получить данные страницы... Страница {i} не доступна...\n', e)
+                print(
+                    f"\nНе удалось получить данные страницы... Страница {i} не доступна...\n",
+                    e,
+                )
                 i += 1
-        print("---Success---")

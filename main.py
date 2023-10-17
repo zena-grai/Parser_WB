@@ -12,8 +12,8 @@ start = datetime.datetime.now()
 # obj = ParserWB(url)
 # obj.main()
 # print("Выгрузка аккумулятор для автомобилей завершена!")
-
-# Аккумуляторы для ИБП +-2700
+#
+# # Аккумуляторы для ИБП +-2700
 # url = "https://catalog.wb.ru/catalog/electronic17/catalog?TestGroup=control&TestID=331&appType=1&cat=128306&curr=rub&dest=-1257786&page=number_page&regions=80,83,38,4,64,33,68,70,30,40,86,75,69,1,66,110,22,48,31,71,112,114&sort=popular&spp=29&xsubject=2196"
 # obj = ParserWB(url)
 # obj.main()
