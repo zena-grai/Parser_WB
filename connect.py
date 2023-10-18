@@ -1,5 +1,5 @@
 import sqlite3 as sl
-import pymssql
+#import pymssql
 import _scproxy
 
 class DB:
