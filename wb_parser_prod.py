@@ -95,9 +95,11 @@ class ParserWB:
     def main(self):
         obj_DB = DB()
         obj_DB.make_connection()
-        i = 30
+        i = 1
         while True:
             try:
+                if i > 100:
+                    break
                 response = self.get_category(i)
                 if not response.get("data", {}).get("products", []):
                     break
@@ -105,8 +107,5 @@ class ParserWB:
                 self.prepare_items(response)
                 i += 1
             except Exception as e:
-                print(
-                    f"\nНе удалось получить данные страницы... Страница {i} не доступна...\n",
-                    e,
-                )
+                print(f"\nНе удалось получить данные страницы... Страница {i} не доступна...\n", e)
                 i += 1

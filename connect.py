@@ -1,10 +1,27 @@
 import sqlite3 as sl
-
+import pymssql
+import _scproxy
 
 class DB:
     def __init__(self):
         pass
 
+    # Для работы с рабочей базой данных
+    def connect_mssql(self):
+        flag = True
+        while flag:
+            try:
+                conn = pymssql.connect('server', 'login', 'password', "db")
+                if conn != None:
+                    flag = False
+                    return conn
+                else:
+                    flag = True
+            except pymssql.Error as error:
+                flag = True
+                print("\nОшибка при работе с MSSQL", error)
+
+    # Для работы с локальной базой данных
     def make_connection(self):
         try:
             return sl.connect("my-test.db")
