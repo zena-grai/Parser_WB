@@ -37,8 +37,8 @@ class ParserWB:
                     print(f"Статус - {response.status_code}. Страница - {i}.")
                 else:
                     flag = True
-            except Exception:
-                print('... ждем ...')
+            except Exception as e:
+                print('...wait...', f'\ne')
                 time.sleep(5)
                 flag = True
         return response.json()
@@ -56,7 +56,7 @@ class ParserWB:
                     ref_card, seller_card = self.get_url_for_data(str(product["id"]))
                     item_data, item_seller = self.get_card_data(ref_card, seller_card)
                 except Exception as e:
-                    print("\nОшибка получения json...\n", url_card)
+                    print("\nОшибка получения json...\n", url_card, f'\nError: {e}')
 
                 try:
                     obj_DB.add_product(url_card, product, item_data, item_seller)
@@ -76,7 +76,7 @@ class ParserWB:
             ref_card = f"https://basket-number_rep.wb.ru/vol{card_id[:4]}/part{card_id[:6]}/{card_id}/info/ru/card.json"
             ref_seller = f"https://basket-number_rep.wb.ru/vol{card_id[:4]}/part{card_id[:6]}/{card_id}/info/sellers.json"
         else:
-            print(f"Артикул не соответствует заданной длине! ID товара - {card_id}")
+            print(f"Артикул не соответствует заданной длине! \nID товара - {card_id}")
 
         for i in range(1, 13):
             new_ref_card = ref_card.replace("number_rep", str(i).zfill(2))
@@ -89,8 +89,8 @@ class ParserWB:
             card_u = requests.get(card_url).json()["grouped_options"]
             seller_u = requests.get(seller_url).json()
             return card_u, seller_u
-        except Exception:
-            print("\nSomething went wrong...", f"\nURL - {card_url}")
+        except Exception as e:
+            print("\nSomething went wrong...", f"\nURL - {card_url}", f"Error: {e}")
 
     def main(self):
         obj_DB = DB()

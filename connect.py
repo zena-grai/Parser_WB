@@ -1,6 +1,5 @@
 import sqlite3 as sl
 #import pymssql
-import _scproxy
 
 class DB:
     def __init__(self):
@@ -12,7 +11,7 @@ class DB:
         while flag:
             try:
                 conn = pymssql.connect('server', 'login', 'password', "db")
-                if conn != None:
+                if conn is not None:
                     flag = False
                     return conn
                 else:
@@ -147,6 +146,7 @@ class DB:
         )
         cursor.execute(sqlite_insert_with_param, data_tuple)
         c.commit()
+        cursor.close()
         # Закрываем соединение с базой
         c.close()
 
